@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>식약처 공공 데이터</title>
+
+    <!-- JQuery를 import 합니다 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <style type="text/css">
+        div.question-box {
+            margin: 10px 0 20px 0;
+        }
+    </style>
+
+    <script>
+        function q1() {
+            //names-q1 비워주기 empty 함수
+            $('#names-q1').empty();
+            //Ajax써서 GET으로 데이터 받아오기
+            $.ajax({
+                type: "GET",
+                url: "http://openapi.foodsafetykorea.go.kr/api/b7511e10cbfd4b10a763/I0030/json/1/5",
+                data: {}, //데이터 보내지 않음
+                success: function(response) {
+                    // console.log(response) 콘솔창에서 테스트결과 볼 수 있음
+                    //let total_count_date = datetime.today().strftime("%Y") + "년" + datetime.today().strftime("%m") + "월" + datetime.today().strftime("%d") + "일" + '날짜 기준 품목신고 총 수는' + total_count + '개 입니다.'
+                    var current_date = new Date();
+                    let data = response['I0030']['row']
+                    let total_count = response['I0030']['total_count']
+                    let total_count_date = '품목신고 완료:' + ' ' + total_count + '개, ' + current_date + ' 기준' + ''
+
+                    // LCNS_NO, BSSH_NM, PRDLST_REPORT_NO
+                    //  $('#names-q1').append(current_date);
+                    $('#names-q1').append(total_count_date);
+                    for (let i = 0; i < data.length; i++) {
+                        let lecense_number = data[i]['LCNS_NO'] // 인허가번호
+                        let factory = data[i]['BSSH_NM'] // 업소명
+                        let product_report_number = data[i]['PRDLST_REPORT_NO'] // 품목제조번호
+                        let product_name = data[i]['PRDLST_NM'] //품목 명
+                        let permission_date = data[i]['PRDLST_NM'] // 허가일자
+                        let shelflife = data[i]['PRMS_DT'] // 유통기한 일수
+                        let dispose = data[i]['DISPOS'] // 성상
+                        let intake_method = data[i]['NTK_MTHD'] // 섭취방법
+                        let primary_functionality = data[i]['PRIMARY_FNCLTY'] // 주된 기능성
+                        let caution = data[i]['IFTKN_ATNT_MATR_CN'] //섭취시 주의사항
+                        let storage_method = data[i]['CSTDY_MTHD'] // 보관 방법
+                        let category = data[i]['PRDLST_CDNM'] // 유형
+                        let standard_stadard = data[i]['STDR_STND'] // 기준 규격
+                        let high_low_calorie = data[i]['HIENG_LNTRT_DVS_NM'] // 고열량저영양여부
+                        let production = data[i]['PRODUCTION'] // 생산종료여부
+                        let child = data[i]['CHILD_CRTFC_YN'] // 어린이 기호 식품 여부
+                        let product_shape = data[i]['PRDT_SHAP_CD_NM'] //제품 형태
+                        let package = data[i]['FRMLC_MTRQLT'] // 포장 재질
+                        let substance = data[i]['RAWMTRL_NM'] // 품목 유형(기능지표성분)
+                        let type_of_business = data[i]['INDUTY_CD_NM'] // 업종 (건강기능식품전문제조업)
+                        let last_update = data[i]['LAST_UPDT_DTM'] // 최종수정일자
+
+                        let temp_html = '<li>' + '제품명: ' + product_name + '&nbsp / 성분:' + substance + +'/ 성상:' + product_shape + ' / 포장: ' + package + ' </li>'
+
+                        $('#names-q1').append(temp_html);
+                    }
+                }
+            });
+            //names-q1에 html 추가(append)
+        }
+    </script>
+
+</head>
+
+<body>
+    <h1>식품의약품안전처 공공데이터 활용한 품목신고 현황</h1>
+
+    <hr/>
+
+    <div class="question-box">
+        <h2>건강기능식품 품목제조 신고사항 현황</h2>
+        <p>1~100번의 건강기능식품 정보를 표기해주세요</p>
+        <p>업데이트 버튼을 누를 때마다 지웠다 새로 씌여져야 합니다.</p>
+        <button onclick="q1()">업데이트</button>
+        <ul id="names-q1">
+
+            <li>Total Count: 28,281 (2020.04.13 기준)</li>
+            <li> : </li>
+        </ul>
+    </div>
+</body>
+
+</html>
